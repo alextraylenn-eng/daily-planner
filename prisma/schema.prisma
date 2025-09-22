@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = env("DATABASE_PROVIDER")
+  url      = env("DATABASE_URL")
+}
+
+enum Bucket {
+  PRIORITY
+  SHOULD_COULD
+}
+
+enum Status {
+  NOT_STARTED
+  ON
+  DONE
+}
+
+enum Energy {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Context {
+  HOME
+  UNI
+  ERRANDS
+  COMPUTER
+  PHONE
+  ANYWHERE
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  bucket      Bucket    @default(PRIORITY)
+  status      Status    @default(NOT_STARTED)
+  start       DateTime?
+  durationMin Int?
+  energy      Energy?
+  context     Context?
+  tags        String[]  @default([])
+  date        DateTime
+  notes       Note[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  body      String?
+  date      DateTime
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DumpItem {
+  id        String   @id @default(cuid())
+  title     String
+  notes     String?
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
